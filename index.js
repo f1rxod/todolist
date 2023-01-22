@@ -4,6 +4,8 @@ const app = ex()
 const https = require('https')
 
 var item_new = ['buy Food', 'buy groceries'];
+var work_item = ['buy'];
+
 
 app.use(ex.static('public'))
 app.use(bp.urlencoded({extended:true}));
@@ -26,13 +28,33 @@ app.get('/', function(req, res){
         additional: item_new
     }) 
 })
+
 app.post('/', function(req, res){
     var new_ = req.body.new_one;
-    item_new.push(new_)   
-    for (let i = 0; i < item_new.length; i++) {
-        if(item_new[i] === 'Farxod is Gay'){
-            item_new.pop();
-        }
+    if (req.body.list === 'Work') {
+        work_item.push(new_) 
+        res.redirect('/work')
+    }  else{
+        item_new.push(new_)
+        res.redirect('/') 
     }
-    res.redirect('/')
+})
+
+
+app.get('/work', function(req,res){
+    res.render('list', {
+        kindofDay:'Work', 
+        additional:work_item
+    })
+})
+
+app.post('/work', function(req, res){
+    var new_ = req.body.new_one;
+    work_item.push(new_)  
+    res.redirect('/work')
+})
+
+
+app.post('/about', function(req, res){
+    res.render('about');
 })
